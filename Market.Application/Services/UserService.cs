@@ -24,6 +24,7 @@ namespace Market.Application.Services
             {
                 var mapToEntity = mapper.Map<User>(item);
                 repository.Add(mapToEntity);
+                //var rabbit = new RabbitMqService();
                 return $"Created new item with this ID: {mapToEntity.Id}";
             }
         }

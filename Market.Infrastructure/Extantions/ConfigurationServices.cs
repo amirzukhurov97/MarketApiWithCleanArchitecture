@@ -79,6 +79,8 @@ namespace Market.Infrastructure.Extantions
             services.AddScoped<MarketService>();
             services.AddScoped<AuthService>();
 
+            //services.AddSingleton<IRabbitMqService, RabbitMqService>();
+
             services.AddAutoMapper(op =>
             {
                 op.AddMaps(typeof(ProductProfile).Assembly);

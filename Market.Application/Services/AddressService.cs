@@ -64,14 +64,21 @@ namespace Market.Application.Services
 
         public string Remove(Guid id)
         {
-            var _item = repository.GetById(id);
-            if (_item is null)
+            try
             {
-                return "Address is not found";
+                var _item = repository.GetById(id).FirstOrDefault();
+                if (_item is not null)
+                {
+                    var isDelete = repository.Remove(id);
+                    return "Address is deleted";
+                }
+                return null;
             }
-            repository.Remove(id);
-
-            return "Address is deleted";
+            catch (Exception)
+            {
+                throw;
+            }
+            
         }
 
         public string Update(AddressUpdateRequest item)

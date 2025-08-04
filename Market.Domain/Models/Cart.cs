@@ -6,7 +6,6 @@ namespace MarketApi.Models
     {
         public Guid UserId { get; set; }
         public decimal TotalPrice { get; set; }
-        public decimal TotalPriceUSD { get; set; }
-        
+        public decimal TotalPriceUSD { get; set; }        
     }
 }

@@ -19,6 +19,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
     <ProjectReference Include="..\Market.Application\Market.Application.csproj" />
+    <ProjectReference Include="..\RabbitMq\RabbitMq.csproj" />
   </ItemGroup>
 
 </Project>

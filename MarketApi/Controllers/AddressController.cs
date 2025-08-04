@@ -47,7 +47,8 @@ namespace MarketApi.Controllers
                     return BadRequest(ModelState);
                 }
                 Log.Information("In the method Create request => {@request}", addressRequest);
-                return addressService.Create(addressRequest);
+                var result = addressService.Create(addressRequest);
+                return Ok(result);    
             }
             catch (SqlException ex)
             {
@@ -92,6 +93,11 @@ namespace MarketApi.Controllers
             {
                 logger.LogInformation($"Deleting address with ID: {id} from the database.");
                 var resDel = addressService.Remove(id);
+                if (resDel is null)
+                {
+                    logger.LogWarning($"No address found with ID: {id} to delete.");
+                    return NotFound(null);
+                }
                 return Ok(resDel);
 
             }
@@ -103,12 +109,17 @@ namespace MarketApi.Controllers
         }
         [HttpPut]
         [Authorize(Roles = "admin")]
-        public IActionResult Put(AddressUpdateRequest addressUpdate)
+        public ActionResult<string> Put(AddressUpdateRequest addressUpdate)
         {
             try
             {
                 logger.LogInformation($"Updating address with ID: {addressUpdate.Id} in the database.");
                 var product = addressService.Update(addressUpdate);
+                if (product is null)
+                    {
+                    logger.LogWarning($"No address found with ID: {addressUpdate.Id} to update.");
+                    return NotFound(null);
+                }
                 return Ok(product);
             }
             catch (Exception ex)
