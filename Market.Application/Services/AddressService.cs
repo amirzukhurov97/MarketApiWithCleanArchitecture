@@ -17,7 +17,7 @@ namespace Market.Application.Services
             {
                 var mapToEntity = mapper.Map<Address>(item);
                 repository.Add(mapToEntity);
-                return $"Created new item with this ID: {mapToEntity.Id}";
+                return $"Created new item with this ID: {mapToEntity.Name}";
             }
         }
 
@@ -70,7 +70,7 @@ namespace Market.Application.Services
                 if (_item is not null)
                 {
                     var isDelete = repository.Remove(id);
-                    return "Address is deleted";
+                    return $"Address {_item.Name} is deleted";
                 }
                 return null;
             }
@@ -86,13 +86,13 @@ namespace Market.Application.Services
             try
             {
                 var _item = repository.GetById(item.Id).ToList();
-                if (_item is null)
+                if (_item.Count() == 0)
                 {
-                    return "Address is not found";
+                    return "";
                 }
                 var mapAddress = mapper.Map<Address>(item);
-                repository.Update(mapAddress);
-                return "Address is updated";
+                var res = repository.Update(mapAddress);
+                return $"Address is updated {mapAddress.Name}";
             }
             catch (Exception)
             {

@@ -7,7 +7,7 @@ using Serilog;
 
 namespace MarketApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AddressController(IGenericService<AddressRequest, AddressUpdateRequest, AddressResponse> addressService, ILogger<AddressController> logger) : ControllerBase
@@ -37,7 +37,7 @@ namespace MarketApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Create(AddressRequest addressRequest)
         {
             try
@@ -86,7 +86,7 @@ namespace MarketApi.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult Delete(Guid id)
         {
             try
@@ -108,17 +108,17 @@ namespace MarketApi.Controllers
             }
         }
         [HttpPut]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Put(AddressUpdateRequest addressUpdate)
         {
             try
             {
                 logger.LogInformation($"Updating address with ID: {addressUpdate.Id} in the database.");
                 var product = addressService.Update(addressUpdate);
-                if (product is null)
+                if (product.Count() == 0)
                     {
                     logger.LogWarning($"No address found with ID: {addressUpdate.Id} to update.");
-                    return NotFound(null);
+                    return NotFound($"No address found with ID: {addressUpdate.Id} to update.");
                 }
                 return Ok(product);
             }

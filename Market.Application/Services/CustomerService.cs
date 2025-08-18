@@ -3,6 +3,7 @@ using Market.Application.DTOs.Customer;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Market.Application.Services
 {
@@ -18,7 +19,7 @@ namespace Market.Application.Services
             {
                 var mapToEntity = mapper.Map<Customer>(item);
                 repository.Add(mapToEntity);
-                return $"Created new item with this ID: {mapToEntity.Id}";
+                return $"Created new item with this ID: {mapToEntity.Name}";
             }
         }
 
@@ -66,9 +67,9 @@ namespace Market.Application.Services
         public string Remove(Guid id)
         {
             var _item = repository.GetById(id);
-            if (_item is null)
+            if (_item.Count() == 0)
             {
-                return "Customer is not found";
+                return "";
             }
             repository.Remove(id);
 
@@ -80,12 +81,12 @@ namespace Market.Application.Services
             try
             {
                 var _item = repository.GetById(item.Id).ToList();
-                if (_item is null)
+                if (_item.Count() == 0)
                 {
-                    return "Measurement is not found";
+                    return "";
                 }
-                var mapMeasurement = mapper.Map<Customer>(item);
-                repository.Update(mapMeasurement);
+                var mapCustomer = mapper.Map<Customer>(item);
+                repository.Update(mapCustomer);
                 return "Customer is updated";
             }
             catch (Exception)

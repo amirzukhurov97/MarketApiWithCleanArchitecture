@@ -17,7 +17,7 @@ namespace Market.Application.Services
             {
                 var mapProductCategory = mapper.Map<ProductCategory>(item);
                 repository.Add(mapProductCategory);
-                return $"Created new item with this ID: {mapProductCategory.Id}";
+                return $"Created new item with this ID: {mapProductCategory.Name}";
             }
         }
 

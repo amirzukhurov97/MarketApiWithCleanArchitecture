@@ -6,15 +6,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class ReturnCustomerService(IReturnCustomerRepository repository, IMarketRopository marketRopository, IMapper mapper) : IGenericService<ReturnCustomerRequest, ReturnCustomerUpdateRequest, ReturnCustomerResponse>
+    public class ReturnCustomerService(IReturnCustomerRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IGenericService<ReturnCustomerRequest, ReturnCustomerUpdateRequest, ReturnCustomerResponse>
     {
         public string Create(ReturnCustomerRequest item)
         {
             try
             {
-                item.SumPrice = item.Price * Convert.ToDecimal(item.Quantity);
-                item.SumPriceUSD = item.PriceUSD * Convert.ToDecimal(item.Quantity);
-                var mapQuantity = mapper.Map<ReturnCustomer>(item);
+                var mapReturnCustomer = mapper.Map<ReturnCustomer>(item);
+                if (item.PriceUSD == 0)
+                {
+                    mapReturnCustomer.PriceUSD = item.Price / currency.GetActual();
+                }
+                if (item.Price == 0)
+                {
+                    mapReturnCustomer.Price = item.PriceUSD * currency.GetActual();
+                }
+                mapReturnCustomer.SumPrice = mapReturnCustomer.Price * Convert.ToDecimal(mapReturnCustomer.Quantity);
+                mapReturnCustomer.SumPriceUSD = mapReturnCustomer.PriceUSD * Convert.ToDecimal(mapReturnCustomer.Quantity);
+                mapReturnCustomer.Date = DateTime.Now;
 
                 var marketItem = new Stock
                 {
@@ -22,8 +31,8 @@ namespace Market.Application.Services
                     Quantity = item.Quantity
                 };
                 var marketResponse = marketRopository.Income(marketItem);
-                repository.Add(mapQuantity);
-                return $"Created new newItem with this ID: {mapQuantity.Id}";
+                repository.Add(mapReturnCustomer);
+                return $"Created new Item with this ID: {mapReturnCustomer.Id}";
 
             }
             catch (Exception)

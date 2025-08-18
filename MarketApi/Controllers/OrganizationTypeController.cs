@@ -7,7 +7,7 @@ using Serilog;
 
 namespace MarketApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class OrganizationTypeController(IGenericService<OrganizationTypeRequest, OrganizationTypeUpdateRequest, OrganizationTypeResponse> organizationTypeServise, ILogger<OrganizationTypeController> logger) : ControllerBase
@@ -17,12 +17,12 @@ namespace MarketApi.Controllers
         {
             try
             {
-                var products = organizationTypeServise.GetAll();
-                if (products is null || !products.Any())
+                var organizationTypes = organizationTypeServise.GetAll();
+                if (organizationTypes is null || !organizationTypes.Any())
                 {
                     return NotFound("No OrganizationTypes found.");
                 }
-                return Ok(products);
+                return Ok(organizationTypes);
 
             }
             catch (SqlException ex)
@@ -61,7 +61,7 @@ namespace MarketApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Create(OrganizationTypeRequest OrganizationTypeRequest)
         {
             try

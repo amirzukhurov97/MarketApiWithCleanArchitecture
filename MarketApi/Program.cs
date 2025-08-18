@@ -1,4 +1,3 @@
-using Market.Application.Authentication;
 using Market.Infrastructure.Extantions;
 using Microsoft.OpenApi.Models;
 using Serilog;

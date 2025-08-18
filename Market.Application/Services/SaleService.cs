@@ -6,23 +6,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class SaleService(ISaleRepository repository, IMarketRopository marketRopository, IMapper mapper) : IGenericService<SaleRequest, SaleUpdateRequest, SaleResponse>
+    public class SaleService(ISaleRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IGenericService<SaleRequest, SaleUpdateRequest, SaleResponse>
     {
         public string Create(SaleRequest item)
         {
             try
             {
-                item.SumPrice = item.Price * Convert.ToDecimal(item.Quantity);
-                item.SumPriceUSD = item.PriceUSD * Convert.ToDecimal(item.Quantity);
-                var mapQuantity = mapper.Map<Sale>(item);
+                var mapSale = mapper.Map<Sale>(item);
+                if (item.PriceUSD == 0)
+                {
+                    mapSale.PriceUSD = item.Price / currency.GetActual();
+                }
+                if (item.Price == 0)
+                {
+                    mapSale.Price = item.PriceUSD * currency.GetActual();
+                }
+                mapSale.SumPrice = mapSale.Price * Convert.ToDecimal(mapSale.Quantity);
+                mapSale.SumPriceUSD = mapSale.PriceUSD * Convert.ToDecimal(mapSale.Quantity);
+                mapSale.Date = DateTime.Now;
                 var marketItem = new Stock
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Quantity
                 };
                 var marketResponse = marketRopository.Expense(marketItem);
-                repository.Add(mapQuantity);
-                return $"Created new newItem with this ID: {mapQuantity.Id}";
+                repository.Add(mapSale);
+                return $"Created new newItem with this ID: {mapSale.Id}";
 
             }
             catch (Exception)

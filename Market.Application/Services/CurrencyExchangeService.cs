@@ -2,6 +2,9 @@
 using Market.Application.DTOs.CurrencyExchange;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
+using System.Globalization;
+using System.Text;
+using System.Xml.Linq;
 
 namespace Market.Application.Services
 {
@@ -91,16 +94,51 @@ namespace Market.Application.Services
                 throw;
             }
         }
-        public decimal CurrencyRate()
-        {
-            try
-            {
-                return repository.GetActual();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error retrieving the actual currency exchange rate.", ex);
-            }
-        }
+
+        //public async Task<CurrencyExchangeResponse?> GetExchangeRateFromNbtAsync()
+        //{
+        //    try
+        //    {
+        //        var today = DateTime.Today.ToString("yyyy-MM-d");
+        //        var url = $"https://nbt.tj/ru/kurs/export_xml_dynamic.php?d1={today}&d2={today}&cn=840&cs=USD&export=xml";
+
+        //        using var httpClient = new HttpClient();
+        //        using var response = await httpClient.GetAsync(url);
+        //        if (!response.IsSuccessStatusCode)
+        //            return null;
+
+        //        // Прочитать контент с кодировкой Windows-1251
+        //        var stream = await response.Content.ReadAsStreamAsync();
+        //        using var reader = new StreamReader(stream, Encoding.GetEncoding("windows-1251"));
+        //        var xmlContent = await reader.ReadToEndAsync();
+
+        //        var xdoc = XDocument.Parse(xmlContent);
+        //        var record = xdoc.Descendants("Record").FirstOrDefault();
+        //        if (record != null)
+        //        {
+        //            var charCode = record.Element("CharCode")?.Value;
+        //            var valueStr = record.Element("Value")?.Value;
+        //            var dateStr = record.Attribute("Date")?.Value;
+
+        //            if (!string.IsNullOrWhiteSpace(charCode) && !string.IsNullOrWhiteSpace(valueStr))
+        //            {
+        //                return new CurrencyExchangeResponse
+        //                {
+        //                    USDtoTJS = decimal.Parse(valueStr, CultureInfo.InvariantCulture),
+        //                    DateTime = DateTime.ParseExact(dateStr, "dd.MM.yyyy", CultureInfo.InvariantCulture)
+        //                };
+        //            }
+        //        }
+
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // В проде логируй
+        //        return null;
+        //    }
+        //}
+
+
     }
 }

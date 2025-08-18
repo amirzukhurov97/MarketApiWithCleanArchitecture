@@ -17,7 +17,7 @@ namespace Market.Application.Services
             {
                 var mappedOrganizationType = mapper.Map<OrganizationType>(item);
                 repository.Add(mappedOrganizationType);
-                return $"Created new item with this ID: {mappedOrganizationType.Id}";
+                return $"Created new item with this ID: {mappedOrganizationType.Name}";
             }
         }
 

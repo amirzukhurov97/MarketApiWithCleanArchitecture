@@ -7,13 +7,13 @@ using Serilog;
 
 namespace MarketApi.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PurchaseController(IGenericService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse> service, ILogger<PurchaseController> logger) : ControllerBase
     {
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Create([FromBody]PurchaseRequest productRequest)
         {
             try

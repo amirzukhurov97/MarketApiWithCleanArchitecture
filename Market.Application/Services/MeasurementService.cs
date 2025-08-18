@@ -17,7 +17,7 @@ namespace Market.Application.Services
             {
                 var mapToEntity = mapper.Map<Measurement>(item);
                 repository.Add(mapToEntity);
-                return $"Created new item with this ID: {mapToEntity.Id}";
+                return $"Created new item with this ID: {mapToEntity.Name}";
             }
         }
 

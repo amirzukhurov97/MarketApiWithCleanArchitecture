@@ -1,5 +1,4 @@
-﻿using Market.Infrastructure.RebbitMq;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
@@ -31,7 +30,7 @@ namespace RabbitMq
                 arguments: null);
         }
 
-        public void PublishUserCreatedSms(SmsNotification sms)
+        public void PublishUserCreatedSms(string sms)
         {
             if (sms == null)
             {

@@ -1,5 +1,6 @@
 ﻿using Market.Application.DTOs.CurrencyExchange;
 using Market.Application.Services;
+using MarketApi.Infrastructure.Interfacies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Serilog;
@@ -8,7 +9,7 @@ namespace MarketApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CurrencyExchangeController(IGenericService<CurrencyExchangeRequest, CurrencyExchangeUpdateRequest, CurrencyExchangeResponse> service, ILogger<PurchaseController> logger) : ControllerBase
+    public class CurrencyExchangeController(IGenericService<CurrencyExchangeRequest, CurrencyExchangeUpdateRequest, CurrencyExchangeResponse> service, ICurrencyExchangeRepository currencyExchange, ILogger<PurchaseController> logger) : ControllerBase
     {
         [HttpPost]
         public ActionResult<string> Create(CurrencyExchangeRequest сurrencyExchangeRequest)
@@ -95,6 +96,22 @@ namespace MarketApi.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, $"An error occurred while deleting CurrencyExchange with ID: {id}.");
+                throw new Exception(ex.Message);
+            }
+        }
+        [HttpGet("actualCurrency")]
+        public IActionResult ActualCurrency()
+        {
+            try
+            {
+                logger.LogInformation($"Getting actual CurrencyExchange from the database.");
+                var resDel = currencyExchange.GetActual();
+                return Ok(resDel);
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"An error occurred while getting CurrencyExchange.");
                 throw new Exception(ex.Message);
             }
         }

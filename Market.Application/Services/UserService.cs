@@ -1,18 +1,12 @@
 ﻿using AutoMapper;
-using Market.Application.DTOs.Address;
 using Market.Application.DTOs.User;
 using Market.Application.Interfacies;
-using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RabbitMq;
 
 namespace Market.Application.Services
 {
-    public class UserService(IUserRepository repository, IMapper mapper) : IGenericService<UserRequest, UserUpdateRequest, UserResponse>
+    public class UserService(IUserRepository repository, IRabbitMqService rabbit, IMapper mapper) : IGenericService<UserRequest, UserUpdateRequest, UserResponse>
     {
         public string Create(UserRequest item)
         {
@@ -24,7 +18,8 @@ namespace Market.Application.Services
             {
                 var mapToEntity = mapper.Map<User>(item);
                 repository.Add(mapToEntity);
-                //var rabbit = new RabbitMqService();
+                // Publish the user creation event to RabbitMQ
+                rabbit.PublishUserCreatedSms($"Created new User: {mapToEntity.Name}");
                 return $"Created new item with this ID: {mapToEntity.Id}";
             }
         }

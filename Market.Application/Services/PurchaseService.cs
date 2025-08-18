@@ -6,24 +6,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class PurchaseService(IPurchaseRepository repository, IMarketRopository marketRopository, IMapper mapper) : IGenericService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse>
+    public class PurchaseService(IPurchaseRepository repository, IMarketRopository marketRopository, IMapper mapper, ICurrencyExchangeRepository currency) : IGenericService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse>
     {
         public string Create(PurchaseRequest item)
         {
             try
             {                
-                 item.SumPrice = item.Price * Convert.ToDecimal(item.Quantity);
-                    item.SumPriceUSD = item.PriceUSD * Convert.ToDecimal(item.Quantity);
-                    var mapQuantity = mapper.Map<Purchase>(item);
-                    
-                    var marketItem = new Stock
-                    {
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity
-                    };
-                    var marketResponse = marketRopository.Income(marketItem);
-                    repository.Add(mapQuantity);
-                return $"Created new newItem with this ID: {mapQuantity.Id}";   
+                var mapPurchase = mapper.Map<Purchase>(item);
+                if (item.PriceUSD == 0)
+                {
+                    mapPurchase.PriceUSD = item.Price / currency.GetActual();
+                }
+                if (item.Price == 0)
+                {
+                    mapPurchase.Price = item.PriceUSD * currency.GetActual();
+                }
+                mapPurchase.SumPrice = mapPurchase.Price * Convert.ToDecimal(mapPurchase.Quantity);
+                mapPurchase.SumPriceUSD = mapPurchase.PriceUSD * Convert.ToDecimal(mapPurchase.Quantity);
+                mapPurchase.Date = DateTime.Now;
+
+                var marketItem = new Stock
+                 {
+                     ProductId = item.ProductId,
+                     Quantity = item.Quantity
+                 };
+                 var marketResponse = marketRopository.Income(marketItem);
+                 var purchaseRespoce = repository.Add(mapPurchase);
+                return $"Created new newItem with this ID: {purchaseRespoce.Id}";   
                 
             }
             catch (Exception)

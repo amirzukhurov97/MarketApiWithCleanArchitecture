@@ -23,10 +23,12 @@ using Market.Mappers;
 using MarketApi.FluentValidation;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Mappers;
+using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RabbitMq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 
@@ -78,8 +80,9 @@ namespace Market.Infrastructure.Extantions
             services.AddScoped<IGenericService<CurrencyExchangeRequest, CurrencyExchangeUpdateRequest, CurrencyExchangeResponse>, CurrencyExchangeService>();
             services.AddScoped<MarketService>();
             services.AddScoped<AuthService>();
+            services.AddScoped<CurrencyExchangeService>();
 
-            //services.AddSingleton<IRabbitMqService, RabbitMqService>();
+            services.AddSingleton<IRabbitMqService, RabbitMqService>();
 
             services.AddAutoMapper(op =>
             {

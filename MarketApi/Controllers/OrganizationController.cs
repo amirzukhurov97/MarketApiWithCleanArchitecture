@@ -10,7 +10,7 @@ namespace MarketApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class OrganizationController(IGenericService<OrganizationRequest, OrganizationUpdateRequest, OrganizationResponse> service, ILogger<OrganizationController> logger) : ControllerBase
     {
         [HttpGet]
@@ -62,7 +62,7 @@ namespace MarketApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Create(OrganizationRequest organizationRequest)
         {
             try

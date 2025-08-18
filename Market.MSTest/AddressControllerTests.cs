@@ -12,7 +12,7 @@ namespace MarketApi.Tests.Controllers
     {
         private Mock<IGenericService<AddressRequest, AddressUpdateRequest, AddressResponse>> _mockService;
         private Mock<ILogger<AddressController>> _mockLogger;
-        private AddressController _controller;
+        private AddressController? _controller;
 
         [TestInitialize]
         public void Setup()
@@ -25,17 +25,14 @@ namespace MarketApi.Tests.Controllers
         [TestMethod]
         public void GetAll_ReturnsOk_WhenAddressesExist()
         {
-            // Arrange
             var mockAddresses = new List<AddressResponse>
             {
                 new AddressResponse { Id = Guid.NewGuid(), Name = "Test Address" }
             };
             _mockService.Setup(s => s.GetAll()).Returns(mockAddresses);
 
-            // Act
             var result = _controller.GetAll();
 
-            // Assert
             var okResult = result as OkObjectResult;
             Assert.IsNotNull(okResult);
             var addresses = okResult.Value as IEnumerable<AddressResponse>;
@@ -44,13 +41,10 @@ namespace MarketApi.Tests.Controllers
         [TestMethod]
         public void GetAll_ReturnsNotFound_WhenNoAddressesExist()
         {
-            // Arrange
             _mockService.Setup(s => s.GetAll()).Returns(new List<AddressResponse>());
 
-            // Act
             var result = _controller.GetAll();
 
-            // Assert
             var notFoundResult = result as NotFoundObjectResult;
             Assert.IsNotNull(notFoundResult);
             Assert.AreEqual(404, notFoundResult.StatusCode);
@@ -58,17 +52,14 @@ namespace MarketApi.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task Create_ReturnsOk_WhenModelIsValid()
+        public void Create_ReturnsOk_WhenModelIsValid()
         {
-            // Arrange
             var request = new AddressRequest { Name = "Valid Address" };
             var expectedMessage = "Created new item with this ID: 123";
             _mockService.Setup(s => s.Create(request)).Returns(expectedMessage);
 
-            // Act
             var result = _controller.Create(request);
 
-            // Assert
             var actionResult = result.Result as OkObjectResult;
             Assert.IsNotNull(actionResult);
             Assert.AreEqual(200, actionResult.StatusCode);

@@ -8,7 +8,7 @@ using Serilog;
 
 namespace MarketApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ProductCategoryController(IGenericService<ProductCategoryRequest, ProductCategoryUpdateRequest, ProductCategoryResponse> productCategoryServise, ILogger<ProductCategoryController> logger):ControllerBase
@@ -41,7 +41,7 @@ namespace MarketApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Create(ProductCategoryRequest productRequest)
         {
             try

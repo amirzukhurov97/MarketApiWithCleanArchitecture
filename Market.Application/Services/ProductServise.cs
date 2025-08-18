@@ -19,7 +19,7 @@ namespace Market.Application.Services
             {
                 var mapProduct = mapper.Map<Product>(item);
                 repository.Add(mapProduct);
-                return $"Created new item with this ID: {mapProduct.Id}";
+                return $"Created new item with this ID: {mapProduct.Name}";
             }
         }
 

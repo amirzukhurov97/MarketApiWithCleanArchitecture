@@ -3,13 +3,14 @@ using Market.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace MarketApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class CustomerController(IGenericService<CustomerRequest, CustomerUpdateRequest, CustomerResponse> customerService, ILogger<ProductController> logger) : ControllerBase
     {        
 
@@ -63,7 +64,7 @@ namespace MarketApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public ActionResult<string> Create(CustomerRequest customerRequest)
         {
             try
@@ -88,13 +89,18 @@ namespace MarketApi.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult Delete(Guid id)
         {
             try
             {
                 logger.LogInformation($"Deleting customer with ID: {id} from the database.");
                 var resDel = customerService.Remove(id);
+                if (resDel.IsNullOrEmpty())
+                {
+                    logger.LogWarning($"No customer found with ID: {id} to delete.");
+                    return NotFound($"No customer found with ID: {id}");
+                }
                 return Ok(resDel);
 
             }
@@ -105,13 +111,18 @@ namespace MarketApi.Controllers
             }
         }
         [HttpPut]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult Put(CustomerUpdateRequest customerUpdate)
         {
             try
             {
                 logger.LogInformation($"Updating customer with ID: {customerUpdate.Id} in the database.");
                 var product = customerService.Update(customerUpdate);
+                if (product.IsNullOrEmpty())
+                {
+                    logger.LogWarning($"No customer found with ID: {customerUpdate.Id} to update.");
+                    return NotFound($"No customer found with ID: {customerUpdate.Id}");
+                }
                 return Ok(product);
             }
             catch (Exception ex)

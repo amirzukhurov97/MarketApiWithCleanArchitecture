@@ -12,44 +12,27 @@ namespace Market.Application.Services
 {
     public class AuthService(IUserRepository repository, IMapper mapper)
     {
-        public async Task<AuthSessionToken> Login(string login, string password)
+        public AuthSessionToken? Login(string login, string password)
         {
             var auth = repository.GetAll().FirstOrDefault(k => k.Email == login && k.Password == password);
             if (auth != null)
             {
-                return await GeneratedJWt(auth);
+                return GeneratedJWt(auth);
             }
             return null;
         }
 
-        public async Task<AuthSessionToken> RefreshToken(string refreshToken)
+        public AuthSessionToken? RefreshToken(string refreshToken)
         {
             var user = repository.GetAll().FirstOrDefault(k => k.RefreshToken == refreshToken);
 
-            if (user is null)
+            if (user != null)
             {
-                throw new ArgumentException("Invalid Email and Password");
+                return GeneratedJWt(user);
             }
-            else
-            {
-                return await GeneratedJWt(user);
-            }
+            return null;
         }
-
-        public string Create(AuthRequest auth)
-        {
-            if (string.IsNullOrEmpty(auth.Login))
-            {
-                return "The name cannot be empty";
-            }
-            else
-            {
-                var mapuser = mapper.Map<User>(auth);
-                repository.Add(mapuser);
-                return $"Created new item with this ID: {mapuser.Id}";
-            }
-        }
-        private async Task<AuthSessionToken> GeneratedJWt(User user)
+        private AuthSessionToken GeneratedJWt(User user)
         {
             var claims = new List<Claim>
             {

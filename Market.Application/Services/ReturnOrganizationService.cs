@@ -6,24 +6,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class ReturnOrganizationService(IReturnOrganizationRepository repository, IMarketRopository marketRopository, IMapper mapper) : IGenericService<ReturnOrganizationRequest, ReturnOrganizationUpdateRequest, ReturnOrganizationResponse>
+    public class ReturnOrganizationService(IReturnOrganizationRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IGenericService<ReturnOrganizationRequest, ReturnOrganizationUpdateRequest, ReturnOrganizationResponse>
     {
         public string Create(ReturnOrganizationRequest item)
         {
             try
             {
-                item.SumPrice = item.Price * Convert.ToDecimal(item.Quantity);
-                item.SumPriceUSD = item.PriceUSD * Convert.ToDecimal(item.Quantity);
-                var mapQuantity = mapper.Map<ReturnOrganization>(item);
-                
+                var mapReturnOrganization = mapper.Map<ReturnOrganization>(item);
+                if (item.PriceUSD == 0)
+                {
+                    mapReturnOrganization.PriceUSD = item.Price / currency.GetActual();
+                }
+                if (item.Price == 0)
+                {
+                    mapReturnOrganization.Price = item.PriceUSD * currency.GetActual();
+                }
+                mapReturnOrganization.SumPrice = mapReturnOrganization.Price * Convert.ToDecimal(mapReturnOrganization.Quantity);
+                mapReturnOrganization.SumPriceUSD = mapReturnOrganization.PriceUSD * Convert.ToDecimal(mapReturnOrganization.Quantity);
+                mapReturnOrganization.Date = DateTime.Now;
+
                 var marketItem = new Stock
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Quantity
                 };
                 var marketResponse = marketRopository.Expense(marketItem);
-                repository.Add(mapQuantity);
-                return $"Created new newItem with this ID: {mapQuantity.Id}";
+                repository.Add(mapReturnOrganization);
+                return $"Created new newItem with this ID: {mapReturnOrganization.Id}";
 
             }
             catch (Exception)

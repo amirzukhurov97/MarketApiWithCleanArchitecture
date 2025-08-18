@@ -18,7 +18,7 @@ namespace Market.Application.Services
             {
                 var mapOrganization = mapper.Map<Organization>(item);
                 repository.Add(mapOrganization);
-                return $"Created new item with this ID: {mapOrganization.Id}";
+                return $"Created new item with this ID: {mapOrganization.Name}";
             }
         }
 

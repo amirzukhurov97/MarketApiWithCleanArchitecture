@@ -10,7 +10,6 @@
 
 
 	  <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
-    <ProjectReference Include="..\Market.Infrastructure\Market.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ namespace Market.Infrastructure.Repositories
     {
         public decimal GetActual()
         {
-            CurrencyExchange? exchangeRate = _context.CurrencyExchange.LastOrDefault();
+            var exchangeRate = _context.CurrencyExchange.OrderByDescending(o=>o.DateTime).Take(1).LastOrDefault();
             if(exchangeRate == null)
             {
                 return 0;

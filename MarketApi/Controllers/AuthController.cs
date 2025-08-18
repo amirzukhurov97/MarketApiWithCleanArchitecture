@@ -9,16 +9,24 @@ namespace Market.Api.Controllers
     public class AuthController(AuthService authService) : ControllerBase
     {
         [HttpPost("LogIn")]
-        public async Task<AuthSessionToken> LogIn(string username, string password)
+        public async Task<IActionResult> LogIn(string username, string password)
         {
-            var token = await authService.Login(username, password);
-            return token;
+            var token = authService.Login(username, password);
+            if (token == null)
+            {
+                return NotFound("Invalid Email and Password");
+            }
+            return Ok(token);
         }
 
         [HttpPost("RefreshToken")]
         public async Task<IActionResult> RefreshToken(string refreshToken)
         {
-            var token = await authService.RefreshToken(refreshToken);
+            var token = authService.RefreshToken(refreshToken);
+            if (token == null)
+            {
+                return NotFound("Invalid Refresh Token");
+            }
             return Ok(token);
         }
     }
