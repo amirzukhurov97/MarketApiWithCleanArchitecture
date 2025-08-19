@@ -1,0 +1,46 @@
+name: Running all tests
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - src/Course2/Tests/**
+      - .github/workflows/run-tests.yml
+  workflow_dispatch:
+
+jobs:
+  Testing:
+    runs-on: ubuntu-latest
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          SA_PASSWORD: 'MyS3cureP@ss!'
+          ACCEPT_EULA: "Y"
+        options: >-
+          --health-cmd "exit 0"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 1433:1433
+  
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore Course2/Course2.sln
+
+      - name: Run unit tests
+        run: dotnet test 'MarketApi/Market.NUnit/Market.NUnit.csproj' --logger "console;verbosity=detailed" --blame
+
+      - name: Run integration tests
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=MarketDb;User Id=sa;Password=MyS3cureP@ss!;TrustServerCertificate=True;"
+        run: dotnet test 'MarketApi/Market.xUnit.Integration/Market.xUnit.Integration.csproj' --logger "console;verbosity=detailed" --blame
