@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - D:/Projects/Tests/**
+      - D:/Projects/**
       - .github/workflows/run-tests.yml
   workflow_dispatch:
 
@@ -32,7 +32,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
 
       - name: Restore dependencies
         run: dotnet restore MarketApi/MarketApi.sln
