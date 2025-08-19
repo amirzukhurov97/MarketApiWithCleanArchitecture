@@ -1,6 +1,6 @@
 ﻿namespace Market.Application.DTOs.EntityBase
 {
-    public record BaseProductRequest
+    public abstract record BaseProductRequest
     {
         public decimal Price { get; set; }
         public decimal PriceUSD { get; set; }
