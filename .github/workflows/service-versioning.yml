@@ -19,6 +19,7 @@ on:
       version:
         description: "The new version of the project"
         value: ${{ jobs.IncreaseVersion.outputs.new_version }}
+  workflow_dispatch:
 
 jobs:
   IncreaseVersion:
