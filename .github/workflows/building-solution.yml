@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 9.0.x
         
     - name: Restore dependencies
-      run: dotnet restore Course2/Course2.sln
+      run: dotnet restore MarketApi/MarketApi.sln
 
     - name: Building solution
-      run: dotnet build Course2/Course2.sln --no-restore
+      run: dotnet build MarketApi/MarketApi.sln --no-restore
