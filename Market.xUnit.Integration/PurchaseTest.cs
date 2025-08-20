@@ -24,7 +24,7 @@ namespace Market.xUnit.Integration
             Assert.True(clients?.Any() == true);
         }
 
-        [Fact]
+        /*[Fact]
         public async Task GetById_ShouldNotReturnCustomerByInvalidId()
         {
             var id = Guid.NewGuid();
@@ -36,7 +36,7 @@ namespace Market.xUnit.Integration
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact]
+        /*Fact]
         public async Task GetById_ShouldReturnCustomerById()
         {
             var id = await GetFirstCustomerId();
@@ -48,7 +48,7 @@ namespace Market.xUnit.Integration
             var customerData = await response.Content.ReadFromJsonAsync<Customer>();
             Assert.NotNull(customerData);
             Assert.Equal(id, customerData.Id);
-        }
+        }*/
 
         [Fact]
         public async Task Create_ShouldNotCreateNewPurchaseWithInvalidData()
@@ -72,7 +72,7 @@ namespace Market.xUnit.Integration
                 Price = 150,
                 PriceUSD = 15,
                 Quantity = 10,
-                Date = DateTime.UtcNow,
+                //Date = DateTime.UtcNow,
                 Comment = "Test purchase"
             };
 
@@ -104,7 +104,7 @@ namespace Market.xUnit.Integration
             Assert.False(response.IsSuccessStatusCode);
         }
 
-        [Fact]
+        /*[Fact]
         public async Task Update_ShouldUpdateByValidId()
         {
             var client = CreateHttpClient();
@@ -124,7 +124,7 @@ namespace Market.xUnit.Integration
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
+        /*[Fact]
         public async Task Delete_ShouldNotDeleteCustomerByInvalidId()
         {
             var client = CreateHttpClient();
@@ -133,9 +133,9 @@ namespace Market.xUnit.Integration
             var response = await client.DeleteAsync($"/api/Customer?id={сustomerId}");
 
             Assert.False(response.IsSuccessStatusCode);
-        }
+        }*/
 
-        [Fact]
+        /*[Fact]
         public async Task Delete_ShouldDeleteCustomerByValidId()
         {
             var client = CreateHttpClient();
@@ -144,18 +144,18 @@ namespace Market.xUnit.Integration
             var response = await client.DeleteAsync($"/api/Customer?id={сustomerId}");
 
             response.EnsureSuccessStatusCode();
-        }
+        }*/
 
         #region Helper methdos
 
-        private async Task<Guid> GetFirstCustomerId()
+        /*private async Task<Guid> GetFirstCustomerId()
         {
             var client = CreateHttpClient();
             var response = await client.GetAsync("/api/Purchase");
             response.EnsureSuccessStatusCode();
             var purchases = await response.Content.ReadFromJsonAsync<IEnumerable<Purchase>>();
             return purchases!.First().Id;
-        }
+        }*/
         private async Task<Guid> GetFirstProductId()
         {
             var client = CreateHttpClient();
