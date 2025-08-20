@@ -32,7 +32,7 @@ namespace Market.Application.Services
                  };
                  var marketResponse = marketRopository.Income(marketItem);
                  var purchaseRespoce = repository.Add(mapPurchase);
-                return $"Created new newItem with this ID: {purchaseRespoce.Id}";   
+                return $"Created new newItem with this ID: {purchaseRespoce.ProductId}";   
                 
             }
             catch (Exception)
