@@ -72,7 +72,6 @@ namespace Market.xUnit.Integration
                 Price = 150,
                 PriceUSD = 15,
                 Quantity = 10,
-                Date = DateTime.UtcNow,
                 Comment = "Test purchase"
             };
 

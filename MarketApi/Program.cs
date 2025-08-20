@@ -17,11 +17,11 @@ builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title =
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
-{
+//if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+//{
     app.UseSwagger();
     app.UseSwaggerUI(op => op.EnableTryItOutByDefault());
-}
+//}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
