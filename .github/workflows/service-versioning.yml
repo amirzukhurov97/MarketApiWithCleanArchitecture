@@ -69,10 +69,11 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          # Проверяем, что branch_name не пуст
-          if [ -z "${{ inputs.branch_name }}" ]; then
-            echo "Имя ветки не предоставлено. Невозможно выполнить pull/rebase."
-            exit 1
+          # Проверяем, что branch_name не пуст, и используем значение по умолчанию, если это так
+          BRANCH_NAME="${{ inputs.branch_name }}"
+          if [ -z "$BRANCH_NAME" ]; then
+            BRANCH_NAME="master" # Используйте имя вашей основной ветки
+            echo "Имя ветки не предоставлено. Используем ветку по умолчанию: $BRANCH_NAME"
           fi
       
           git add .
@@ -80,12 +81,12 @@ jobs:
           
           RETRIES=5
           while [ $RETRIES -gt 0 ]; do
-            git fetch origin ${{ inputs.branch_name }}
+            git fetch origin $BRANCH_NAME
             
-            # Используем git rebase для чистоты истории
-            if git rebase origin/${{ inputs.branch_name }}; then
+            # Используем git rebase
+            if git rebase origin/$BRANCH_NAME; then
               echo "Rebase successful. Attempting to push..."
-              if git push origin ${{ inputs.branch_name }}; then
+              if git push origin $BRANCH_NAME; then
                 echo "Push succeeded!"
                 break
               else
