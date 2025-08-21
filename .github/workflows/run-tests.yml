@@ -33,21 +33,6 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 8.0.x
-          
-      - name: Wait for SQL Server
-        run: |
-          apt-get update
-          apt-get install -y mssql-tools
-          echo "PATH=$PATH:/opt/mssql-tools/bin" >> ~/.bashrc
-          source ~/.bashrc
-          for i in {1..50}; do
-            if /opt/mssql-tools/bin/sqlcmd -S sqlserver -U SA -P 'MyS3cureP@ss!' -Q "SELECT 1" &> /dev/null; then
-              echo "SQL Server is ready."
-              break
-            fi
-            echo "Waiting for SQL Server..."
-            sleep 5
-          done
 
       - name: Restore dependencies
         run: dotnet restore MarketApi/MarketApi.sln
@@ -57,5 +42,5 @@ jobs:
 
       - name: Run integration tests
         env:
-          ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=MarketDB;User Id=SA;Password=MyS3cureP@ss!;TrustServerCertificate=True"
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=MarketDB;User Id=SA;Password=MyS3cureP@ss!;TrustServerCertificate=True"
         run: dotnet test 'Market.xUnit.Integration/Market.xUnit.Integration.csproj' --logger "console;verbosity=detailed" --blame
