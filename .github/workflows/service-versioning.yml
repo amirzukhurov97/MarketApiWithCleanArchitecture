@@ -75,7 +75,7 @@ jobs:
           RETRIES=5
           while [ $RETRIES -gt 0 ]; do
             git fetch origin ${{ inputs.branch_name }}
-            echo ${{ inputs.branch_name }}
+            echo "${{ inputs.branch_name }}"
             # Attempt to merge, capturing the exit code
             if git merge origin/${{ inputs.branch_name }}; then
               echo "Merge successful or not needed. Attempting to push..."
