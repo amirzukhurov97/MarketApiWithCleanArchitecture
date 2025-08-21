@@ -24,7 +24,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
 
       - name: Restore dependencies
         run: dotnet restore MarketApi/Market.Api.csproj
@@ -44,7 +44,7 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
         with:
           context: ./MarketApi
-          file: MarketApi/Dockerfile
+          file: /Dockerfile
           push: true
           tags: |
             amirjonzukhurov/market.cbs:latest
