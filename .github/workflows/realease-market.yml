@@ -11,7 +11,7 @@ jobs:
 #    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/production'
     uses: ./.github/workflows/service-versioning.yml
     with:
-      project_file_path: "MarketApi/Market.Api.csproj"
+      project_file_path: "D:\Projects\MarketApi\MarketApi\Market.Api.csproj"
       should_add_version_tag: ${{ github.ref == 'refs/heads/main' }}
    
   Release:
@@ -27,7 +27,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Restore dependencies
-        run: dotnet restore MarketApi/Market.Api.csproj
+        run: dotnet restore D:\Projects\MarketApi\MarketApi\Market.Api.csproj
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -44,7 +44,7 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
         with:
           context: ./MarketApi
-          file: MarketApi/Market.API/Dockerfile
+          file: D:\Projects\MarketApi\MarketApi/Dockerfile
           push: true
           tags: |
             amirjonzukhurov/market.cbs:latest
