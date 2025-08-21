@@ -24,6 +24,8 @@ on:
 jobs:
   IncreaseVersion:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
