@@ -15,39 +15,33 @@ jobs:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
-          SA_PASSWORD: 'MyS3cureP@ss!'
+          SA_PASSWORD: "MyS3cureP@ss!"
           ACCEPT_EULA: "Y"
+          MSSQL_PID: "Express"
         ports:
           - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'MyS3cureP@ss!' -Q 'SELECT 1' || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out repository code
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-dotnet@v1
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 8.0.x  
-          
+          dotnet-version: 8.0.x
+
       - name: Restore dependencies
         run: dotnet restore MarketApi/MarketApi.sln
-        
-      - name: Install netcat
-        run: sudo apt-get install -y netcat
-
-      - name: Wait for SQL Server
-        run: |
-            for i in {1..30}; do
-            nc -z sqlserver 1433 && echo "SQL is up" && break
-            echo "Waiting for sqlserver:1433..."
-            sleep 5
-            done
-
-      - name: Run EF migrations
-        run: dotnet ef database update --project MarketApi/MarketApi.csproj --connection "Server=sqlserver;Database=MarketDB;User Id=SA;Password=MyS3cureP@ss!;TrustServerCertificate=True"
 
       - name: Run unit tests
         run: dotnet test 'Market.NUnit/Market.NUnit.csproj' --logger "console;verbosity=detailed" --blame
 
       - name: Run integration tests
         env:
-          ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=MarketDB;User Id=SA;Password=MyS3cureP@ss!;TrustServerCertificate=True"
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=Test_DB;User Id=sa;Password=MyS3cureP@ss!;TrustServerCertificate=True;"
         run: dotnet test 'Market.xUnit.Integration/Market.xUnit.Integration.csproj' --logger "console;verbosity=detailed" --blame
