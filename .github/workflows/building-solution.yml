@@ -26,7 +26,4 @@ jobs:
       run: dotnet restore MarketApi/MarketApi.sln
 
     - name: Building solution
-
       run: dotnet build MarketApi/MarketApi.sln --no-restore
-   
-
