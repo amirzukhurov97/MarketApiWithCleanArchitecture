@@ -14,12 +14,12 @@ on:
         required: false
         type: string
         default: 'main'
-      workflow_dispach:
     
     outputs:
       version:
         description: "The new version of the project"
         value: ${{ jobs.IncreaseVersion.outputs.new_version }}
+  workflow_dispatch:
 
 jobs:
   IncreaseVersion:
