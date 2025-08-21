@@ -42,5 +42,5 @@ jobs:
 
       - name: Run integration tests
         env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=MarketDb;User Id=sa;Password=MyS3cureP@ss!;TrustServerCertificate=True;"
+          ConnectionStrings__DefaultConnection: "Data Source=localhost\\SQLEXPRESS;Initial Catalog=MarketDB;Integrated Security=True;Trust Server Certificate=True;"
         run: dotnet test 'Market.xUnit.Integration/Market.xUnit.Integration.csproj' --logger "console;verbosity=detailed" --blame
