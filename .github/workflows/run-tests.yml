@@ -27,16 +27,18 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Install sqlcmd
-        run: sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
+      - name: Install netcat
+        run: sudo apt-get install -y netcat
 
       - name: Wait for SQL Server
         run: |
-          for i in {1..30}; do
-            /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U SA -P 'MyS3cureP@ss!' -C -Q "SELECT 1" && break
-            echo "SQL Server is starting up, waiting..."
-            sleep 5
-          done
+        for i in {1..30}; do
+          nc -z sqlserver 1433 && echo "SQL is up" && break
+          echo "Waiting for sqlserver:1433..."
+          sleep 5
+        done
+
+
 
       - name: Restore dependencies
         run: dotnet restore MarketApi/MarketApi.sln
