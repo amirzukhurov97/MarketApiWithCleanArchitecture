@@ -1,26 +1,34 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+# This stage is used when running from VS in fast mode (Default for Debug configuration)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+
+# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /"D:/Projects"
-COPY ["MarketAPI/Market.API.csproj", "Market.API/"]
+WORKDIR /src
+COPY ["MarketApi/Market.Api.csproj", "MarketApi/"]
 COPY ["Market.Application/Market.Application.csproj", "Market.Application/"]
 COPY ["Market.Domain/Market.Domain.csproj", "Market.Domain/"]
+COPY ["RabbitMq/RabbitMq.csproj", "RabbitMq/"]
 COPY ["Market.Infrastructure/Market.Infrastructure.csproj", "Market.Infrastructure/"]
-RUN dotnet restore "MarketAPI/Market.API.csproj"
+RUN dotnet restore "./MarketApi/Market.Api.csproj"
 COPY . .
-WORKDIR "D:/Projects/MarketApi"
-RUN dotnet build "Market.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/MarketApi"
+RUN dotnet build "./Market.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Market.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Market.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Market.API.dll"]
+ENTRYPOINT ["dotnet", "Market.Api.dll"]

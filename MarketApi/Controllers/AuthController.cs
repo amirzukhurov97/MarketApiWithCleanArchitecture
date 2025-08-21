@@ -9,7 +9,7 @@ namespace Market.Api.Controllers
     public class AuthController(AuthService authService) : ControllerBase
     {
         [HttpPost("LogIn")]
-        public async Task<IActionResult> LogIn(string username, string password)
+        public IActionResult LogIn(string username, string password)
         {
             var token = authService.Login(username, password);
             if (token == null)
@@ -20,7 +20,7 @@ namespace Market.Api.Controllers
         }
 
         [HttpPost("RefreshToken")]
-        public async Task<IActionResult> RefreshToken(string refreshToken)
+        public IActionResult RefreshToken(string refreshToken)
         {
             var token = authService.RefreshToken(refreshToken);
             if (token == null)
