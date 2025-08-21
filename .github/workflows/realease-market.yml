@@ -47,13 +47,13 @@ jobs:
           file: MarketApi/Dockerfile
           push: true
           tags: |
-            amirjonzukhurov/market.cbs:latest
-            amirjonzukhurov/market.cbs:${{ needs.Versioning.outputs.version }}
+            azsh97/mynewproject:latest
+            azsh97/mynewproject:${{ needs.Versioning.outputs.version }}
 
       - name: Generate release notes
         run: |
           echo "## Release notes🚀" >> $GITHUB_STEP_SUMMARY
-          echo "- Image name: **amirjonzukhurov/market"** >> $GITHUB_STEP_SUMMARY
+          echo "- Image name: **azsh97/mynewproject"** >> $GITHUB_STEP_SUMMARY
           echo "- New version: **${{ needs.Versioning.outputs.version }}"** >> $GITHUB_STEP_SUMMARY
           echo "- Docker image tags: **${{ needs.Versioning.outputs.version }}**, **latest**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
