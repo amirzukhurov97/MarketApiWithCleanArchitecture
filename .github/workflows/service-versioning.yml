@@ -32,7 +32,7 @@ jobs:
         id: update_version
         run: |
           # Extract current version from the .csproj file
-          VERSION=$(grep '<Version>' ${{ inputs.project_file_path }} | sed -e 's/<[^>]*>//g' || echo "1.0.0")
+          VERSION=$(grep '<Version>' MarketApi/Market.Api.csproj | sed -e 's/<[^>]*>//g' || echo "1.0.0")
 
           # Split the version into major, minor, and patch components
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
@@ -51,10 +51,10 @@ jobs:
           echo "New version: $NEW_VERSION"
 
           # Ensure the .csproj file has a <Version> tag and update it
-          if grep -q '<Version>' ${{ inputs.project_file_path }}; then
-            sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" ${{ inputs.project_file_path }}
+          if grep -q '<Version>' MarketApi/Market.Api.csproj; then
+            sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" MarketApi/Market.Api.csproj
           else
-            sed -i "s|</Project>|<PropertyGroup><Version>$NEW_VERSION</Version></PropertyGroup></Project>|" ${{ inputs.project_file_path }}
+            sed -i "s|</Project>|<PropertyGroup><Version>$NEW_VERSION</Version></PropertyGroup></Project>|" MarketApi/Market.Api.csproj
           fi
           
           # Set the new version as an environment variable
