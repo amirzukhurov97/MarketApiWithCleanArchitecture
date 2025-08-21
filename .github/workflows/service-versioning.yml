@@ -69,6 +69,12 @@ jobs:
 
       - name: Commit and push changes
         run: |
+          # Проверяем, что branch_name не пуст
+          if [ -z "${{ inputs.branch_name }}" ]; then
+            echo "Имя ветки не предоставлено. Невозможно выполнить pull/rebase."
+            exit 1
+          fi
+      
           git add .
           git commit -m "Update version to $NEW_VERSION"
           
@@ -76,7 +82,7 @@ jobs:
           while [ $RETRIES -gt 0 ]; do
             git fetch origin ${{ inputs.branch_name }}
             
-            # Используем git rebase вместо git merge
+            # Используем git rebase для чистоты истории
             if git rebase origin/${{ inputs.branch_name }}; then
               echo "Rebase successful. Attempting to push..."
               if git push origin ${{ inputs.branch_name }}; then
@@ -86,10 +92,7 @@ jobs:
                 echo "Push failed, retrying..."
               fi
             else
-              echo "Rebase failed. Resolving conflicts and retrying..."
-              # Здесь можно добавить логику для разрешения конфликтов,
-              # если вы хотите автоматизировать этот процесс.
-              # Например, `git rebase --continue` или `git rebase --abort`
+              echo "Rebase failed. Aborting and retrying..."
               git rebase --abort
             fi
             
