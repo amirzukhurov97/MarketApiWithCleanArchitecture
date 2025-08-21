@@ -43,7 +43,7 @@ jobs:
         env:
           DOCKER_BUILD_SUMMARY: false
         with:
-          context: ./MarketApi
+          context: ./
           file: MarketApi/Dockerfile
           push: true
           tags: |
