@@ -10,7 +10,7 @@ namespace MarketApi.Controllers
 {
     //[Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProductCategoryController(IGenericService<ProductCategoryRequest, ProductCategoryUpdateRequest, ProductCategoryResponse> productCategoryServise, ILogger<ProductCategoryController> logger):ControllerBase
     {
         
