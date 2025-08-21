@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - D:/Projects/Tests/**
+      - D:/Projects/**
       - .github/workflows/run-tests.yml
   workflow_dispatch:
 
@@ -32,15 +32,20 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
 
       - name: Restore dependencies
         run: dotnet restore MarketApi/MarketApi.sln
 
       - name: Run unit tests
+
         run: dotnet test 'MarketApi/Market.NUnit/Market.NUnit.csproj' --logger "console;verbosity=detailed" --blame
+
+       
 
       - name: Run integration tests
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=MarketDb;User Id=sa;Password=MyS3cureP@ss!;TrustServerCertificate=True;"
+
         run: dotnet test 'MarketApi/Market.xUnit.Integration/Market.xUnit.Integration.csproj' --logger "console;verbosity=detailed" --blame
+

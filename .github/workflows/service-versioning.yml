@@ -13,16 +13,19 @@ on:
       branch_name:
         required: false
         type: string
-        default: 'main'
+        default: 'master'
     
     outputs:
       version:
         description: "The new version of the project"
         value: ${{ jobs.IncreaseVersion.outputs.new_version }}
+  workflow_dispatch:
 
 jobs:
   IncreaseVersion:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -31,7 +34,7 @@ jobs:
         id: update_version
         run: |
           # Extract current version from the .csproj file
-          VERSION=$(grep '<Version>' ${{ inputs.project_file_path }} | sed -e 's/<[^>]*>//g' || echo "1.0.0")
+          VERSION=$(grep '<Version>' MarketApi/Market.Api.csproj | sed -e 's/<[^>]*>//g' || echo "1.0.0")
 
           # Split the version into major, minor, and patch components
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
@@ -50,10 +53,10 @@ jobs:
           echo "New version: $NEW_VERSION"
 
           # Ensure the .csproj file has a <Version> tag and update it
-          if grep -q '<Version>' ${{ inputs.project_file_path }}; then
-            sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" ${{ inputs.project_file_path }}
+          if grep -q '<Version>' MarketApi/Market.Api.csproj; then
+            sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" MarketApi/Market.Api.csproj
           else
-            sed -i "s|</Project>|<PropertyGroup><Version>$NEW_VERSION</Version></PropertyGroup></Project>|" ${{ inputs.project_file_path }}
+            sed -i "s|</Project>|<PropertyGroup><Version>$NEW_VERSION</Version></PropertyGroup></Project>|" MarketApi/Market.Api.csproj
           fi
           
           # Set the new version as an environment variable
@@ -68,28 +71,34 @@ jobs:
 
       - name: Commit and push changes
         run: |
+          # Проверяем, что branch_name не пуст, и используем значение по умолчанию, если это так
+          BRANCH_NAME="${{ inputs.branch_name }}"
+          if [ -z "$BRANCH_NAME" ]; then
+            BRANCH_NAME="master" # Используйте имя вашей основной ветки
+            echo "Имя ветки не предоставлено. Используем ветку по умолчанию: $BRANCH_NAME"
+          fi
+      
           git add .
           git commit -m "Update version to $NEW_VERSION"
           
           RETRIES=5
           while [ $RETRIES -gt 0 ]; do
-            git fetch origin ${{ inputs.branch_name }}
-          
-            if git merge origin/${{ inputs.branch_name }}; then
-              echo "Merge successful. Attempting to push..."
-          
-              # Push the changes
-              if git push origin ${{ inputs.branch_name }}; then
+            git fetch origin $BRANCH_NAME
+            
+            # Используем git rebase
+            if git rebase origin/$BRANCH_NAME; then
+              echo "Rebase successful. Attempting to push..."
+              if git push origin $BRANCH_NAME; then
                 echo "Push succeeded!"
                 break
               else
                 echo "Push failed, retrying..."
               fi
             else
-              echo "Merge failed, retrying..."
-              git merge --abort
+              echo "Rebase failed. Aborting and retrying..."
+              git rebase --abort
             fi
-          
+            
             RETRIES=$((RETRIES-1))
             sleep 5
           done

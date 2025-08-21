@@ -8,6 +8,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -25,4 +26,7 @@ jobs:
       run: dotnet restore MarketApi/MarketApi.sln
 
     - name: Building solution
+
       run: dotnet build MarketApi/MarketApi.sln --no-restore
+   
+
