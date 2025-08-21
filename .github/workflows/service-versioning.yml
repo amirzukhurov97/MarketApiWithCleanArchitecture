@@ -75,11 +75,10 @@ jobs:
           RETRIES=5
           while [ $RETRIES -gt 0 ]; do
             git fetch origin ${{ inputs.branch_name }}
-          
+            
+            # Attempt to merge, capturing the exit code
             if git merge origin/${{ inputs.branch_name }}; then
-              echo "Merge successful. Attempting to push..."
-          
-              # Push the changes
+              echo "Merge successful or not needed. Attempting to push..."
               if git push origin ${{ inputs.branch_name }}; then
                 echo "Push succeeded!"
                 break
@@ -87,10 +86,16 @@ jobs:
                 echo "Push failed, retrying..."
               fi
             else
-              echo "Merge failed, retrying..."
-              git merge --abort
+              echo "Merge failed. Checking for conflicts..."
+              # Check if a merge conflict exists before trying to abort
+              if git status | grep 'conflict' > /dev/null; then
+                echo "Merge conflict detected. Aborting merge..."
+                git merge --abort
+              else
+                echo "No merge conflict. Local branch is likely up to date. Retrying push..."
+              fi
             fi
-          
+            
             RETRIES=$((RETRIES-1))
             sleep 5
           done
