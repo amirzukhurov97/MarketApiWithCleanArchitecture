@@ -44,7 +44,7 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
         with:
           context: ./MarketApi
-          file: /Dockerfile
+          file: MarketApi/Dockerfile
           push: true
           tags: |
             amirjonzukhurov/market.cbs:latest
