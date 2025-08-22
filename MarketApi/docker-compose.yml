@@ -1,12 +1,27 @@
 version: '3.8'
-
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"      # для кода (AMQP)
-      - "15672:15672"    # для веб-интерфейса
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-express
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433" # это только если хочешь доступ снаружи
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: MarketApi/Dockerfile
+    container_name: market-api
+    ports:
+      - "8585:8080"
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__Default=Server=db;Database=Market_DB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+
+volumes:
+  sql_data:
