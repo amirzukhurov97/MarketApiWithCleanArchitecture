@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     environment:
-      - ConnectionStrings__Default=Server=db;Database=Market_DB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+      - ConnectionStrings__Default=Server=db;Database=Market_DB;User Id=sa;Password=Secret1_;TrustServerCertificate=True;
 
 volumes:
   sql_data:
