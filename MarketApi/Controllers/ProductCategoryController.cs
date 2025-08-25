@@ -40,6 +40,30 @@ namespace MarketApi.Controllers
 
         }
 
+        [HttpGet("pagination")]
+        public IActionResult GetAll(int pageSize, int pageNumber)
+        {
+            try
+            {
+                var resultPagination = productCategoryServise.GetAll(pageSize, pageNumber);
+                if (resultPagination is null || !resultPagination.Any())
+                {
+                    return NotFound("No resultPagination found.");
+                }
+                return Ok(resultPagination);
+            }
+            catch (SqlException ex)
+            {
+                Log.Error("SQL Error in Create method: {@ex}", ex);
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in Create method: {@ex}", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         //[Authorize(Roles = "admin")]
         public ActionResult<string> Create(ProductCategoryRequest productRequest)

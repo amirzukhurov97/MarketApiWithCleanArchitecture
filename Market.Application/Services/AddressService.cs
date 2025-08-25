@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Market.Application.DTOs.Address;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 
 namespace Market.Application.Services
 {
-    public class AddressService(IAddressRepository repository, IMapper mapper) : IGenericService<AddressRequest, AddressUpdateRequest, AddressResponse>
+    public class AddressService(IAddressRepository repository, IMapper mapper) : IAddressService
     {
         public string Create(AddressRequest item)
         {
@@ -36,6 +37,18 @@ namespace Market.Application.Services
                     }
                 }
                 return responses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public IEnumerable<AddressResponse> GetAll(int pageSize, int pageNumber)
+        {
+            try
+            {
+                var adresses = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<AddressResponse>>(adresses);
             }
             catch (Exception)
             {

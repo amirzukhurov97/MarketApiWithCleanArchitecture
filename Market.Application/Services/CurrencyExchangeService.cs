@@ -46,6 +46,11 @@ namespace Market.Application.Services
             }
         }
 
+        public IEnumerable<CurrencyExchangeResponse> GetAll(int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
+
         public CurrencyExchangeResponse GetById(Guid id)
         {
             try

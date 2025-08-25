@@ -43,6 +43,11 @@ namespace Market.Application.Services
             }
         }
 
+        public IEnumerable<RoleResponse> GetAll(int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
+
         public RoleResponse GetById(Guid id)
         {
             try

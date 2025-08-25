@@ -40,6 +40,15 @@ namespace Market.Infrastructure.Repositories
                 throw;
             }
         }
+        public IQueryable<T> GetAll(int pageSize, int pageNumber)
+        {
+            var totalCount = _context.Set<T>().Count();
+            var pagesCount = (int)Math.Ceiling((double)totalCount / pageSize);
+            var skipCount = pageSize * (pageNumber - 1);
+            return _context.Set<T>()
+                .Skip(skipCount)
+                .Take(pageSize);
+        }
 
         public IQueryable<T> GetById(Guid id)
         {

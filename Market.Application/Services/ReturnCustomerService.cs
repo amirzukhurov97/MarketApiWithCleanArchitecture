@@ -63,6 +63,11 @@ namespace Market.Application.Services
             }
         }
 
+        public IEnumerable<ReturnCustomerResponse> GetAll(int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
+
         public ReturnCustomerResponse GetById(Guid id)
         {
             try

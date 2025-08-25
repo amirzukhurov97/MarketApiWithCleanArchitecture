@@ -1,7 +1,4 @@
-using Market.Infrastructure.DataBase;
 using Market.Infrastructure.Extantions;
-using MarketApi.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using Serilog;
 var builder = WebApplication.CreateBuilder(args);

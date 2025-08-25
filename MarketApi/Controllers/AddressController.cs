@@ -35,6 +35,29 @@ namespace MarketApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("pagination")]
+        public IActionResult GetAll(int pageSize, int pageNumber)
+        {
+            try
+            {
+                var addresses = addressService.GetAll(pageSize, pageNumber);
+                if (addresses is null || !addresses.Any())
+                {
+                    return NotFound("No addresses found.");
+                }
+                return Ok(addresses);
+            }
+            catch (SqlException ex)
+            {
+                Log.Error("SQL Error in Create method: {@ex}", ex);
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in Create method: {@ex}", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         [HttpPost]
         //[Authorize(Roles = "admin")]

@@ -23,7 +23,6 @@ using Market.Mappers;
 using MarketApi.FluentValidation;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Mappers;
-using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -43,6 +43,11 @@ namespace Market.Application.Services
             }
         }
 
+        public IEnumerable<OrganizationTypeResponse> GetAll(int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
+
         public OrganizationTypeResponse GetById(Guid id)
         {
             try

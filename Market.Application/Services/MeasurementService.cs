@@ -47,6 +47,11 @@ namespace Market.Application.Services
             }
         }
 
+        public IEnumerable<MeasurementResponse> GetAll(int pageSize, int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
+
         public MeasurementResponse GetById(Guid id)
         {
             try

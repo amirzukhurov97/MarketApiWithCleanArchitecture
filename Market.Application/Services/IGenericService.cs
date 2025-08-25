@@ -6,6 +6,7 @@ namespace Market.Application.Services
     {
         public string Create(TRequest item);
         IEnumerable<TResponse> GetAll();
+        IEnumerable<TResponse> GetAll(int pageSize, int pageNumber);
         TResponse GetById(Guid id);
         string Update(TUpdateRequest item);
         string Remove(Guid id);
