@@ -1,5 +1,6 @@
 using Market.Application.DTOs.Address;
 using Market.Application.Services;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,13 +10,13 @@ namespace Market.xUnit
 {
     public class AddressControllerTests
     {
-        private readonly Mock<IGenericService<AddressRequest, AddressUpdateRequest, AddressResponse>> _mockService;
+        private readonly Mock<IAddressService<AddressRequest, AddressUpdateRequest, AddressResponse>> _mockService;
         private readonly Mock<ILogger<AddressController>> _mockLogger;
         private readonly AddressController _controller;
 
         public AddressControllerTests()
         {
-            _mockService = new Mock<IGenericService<AddressRequest, AddressUpdateRequest, AddressResponse>>();
+            _mockService = new Mock<IAddressService<AddressRequest, AddressUpdateRequest, AddressResponse>>();
             _mockLogger = new Mock<ILogger<AddressController>>();
             _controller = new AddressController(_mockService.Object, _mockLogger.Object);
         }

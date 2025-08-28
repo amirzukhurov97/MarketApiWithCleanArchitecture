@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Market.Infrastructure.EntityConfigurations
 {
-    public class SaleConfiguration : IEntityTypeConfiguration<Sale>
+    public class SaleConfiguration : IEntityTypeConfiguration<Sell>
     {
-        public void Configure(EntityTypeBuilder<Sale> builder)
+        public void Configure(EntityTypeBuilder<Sell> builder)
         {
             builder.Property(p => p.Quantity)
                             .IsRequired();

@@ -10,7 +10,7 @@ namespace Market.Infrastructure.DataBase
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<Customer> Customers { get; set; } = null!;
         public DbSet<Organization> Organizations { get; set; } = null!;
-        public DbSet<Sale> Sales { get; set; } = null!;
+        public DbSet<Sell> Sells { get; set; } = null!;
         public DbSet<Purchase> Purchases { get; set; } = null!;
         public DbSet<ReturnCustomer> ReturnCustomers { get; set; } = null!;
         public DbSet<ReturnOrganization> ReturnOrganizations { get; set; } = null!;
@@ -25,7 +25,7 @@ namespace Market.Infrastructure.DataBase
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             //Database.EnsureDeleted();
-            ////    Database.EnsureCreated();
+            ////Database.EnsureCreated();
             //Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

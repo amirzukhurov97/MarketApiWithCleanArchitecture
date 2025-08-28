@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Purchase;
 using Market.Application.DTOs.Role;
 using Market.Application.Interfacies;
 using Market.Domain.Models;
@@ -45,14 +46,22 @@ namespace Market.Application.Services
 
         public IEnumerable<RoleResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<RoleResponse>>(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public RoleResponse GetById(Guid id)
         {
             try
             {
-                RoleResponse responses = null;
+                RoleResponse? responses = null;
                 var response = repository.GetById(id).FirstOrDefault();
                 if (response != null)
                 {

@@ -1,5 +1,6 @@
 using Market.Infrastructure.Extantions;
 using Microsoft.OpenApi.Models;
+using QuestPDF.Infrastructure;
 using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,8 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
     .CreateLogger();
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Host.UseSerilog();
 builder.Services.AddApplication(builder.Configuration);

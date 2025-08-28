@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Address;
 using Market.Application.DTOs.Purchase;
+using Market.Application.DTOs.Report;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class PurchaseService(IPurchaseRepository repository, IMarketRopository marketRopository, IMapper mapper, ICurrencyExchangeRepository currency) : IGenericService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse>
+    public class PurchaseService(IPurchaseRepository repository, IMarketRopository marketRopository, IMapper mapper, ICurrencyExchangeRepository currency) : IPurchaseService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse>
     {
         public string Create(PurchaseRequest item)
         {
@@ -66,14 +69,22 @@ namespace Market.Application.Services
 
         public IEnumerable<PurchaseResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<PurchaseResponse>>(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public PurchaseResponse GetById(Guid id)
         {
             try
             {
-                PurchaseResponse responses = null;
+                PurchaseResponse? responses = null;
                 var purchaseList = repository.GetById(id).Include(pc => pc.Product).Include(pm => pm.Organization).FirstOrDefault();
                 if (purchaseList != null)
                 {
@@ -85,6 +96,45 @@ namespace Market.Application.Services
             {
                 throw;
             }
+        }
+
+        public IEnumerable<PurchaseResponse> GetReport(ReportModel reportModel)
+        {
+            try
+            {
+                var query = repository.GetAll()
+                    .Include(pc => pc.Product)
+                    .Include(pm => pm.Organization)
+                    .AsQueryable();
+
+                if (reportModel.ProductId != null)
+                {
+                    query = query.Where(p => p.ProductId == reportModel.ProductId);
+                }
+
+                if (reportModel.OrganizationOrCustomerId != null)
+                {
+                    query = query.Where(p => p.OrganizationId == reportModel.OrganizationOrCustomerId);
+                }
+
+                if (reportModel.StartDate != null)
+                {
+                    query = query.Where(p => p.Date >= reportModel.StartDate);
+                }
+
+                if (reportModel.EndDate != null)
+                {
+                    query = query.Where(p => p.Date <= reportModel.EndDate);
+                }
+
+                var allPurchases = query.ToList();
+                return mapper.Map<List<PurchaseResponse>>(allPurchases);
+            }
+            catch (Exception)
+            {
+                throw; // здесь можно логировать через Serilog вместо простого throw
+            }
+
         }
 
         public string Remove(Guid id)

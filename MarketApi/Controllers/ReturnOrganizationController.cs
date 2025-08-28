@@ -1,5 +1,7 @@
-﻿using Market.Application.DTOs.ReturnOrganization;
+﻿using Market.Application.DTOs.Report;
+using Market.Application.DTOs.ReturnOrganization;
 using Market.Application.Services;
+using Market.Application.SeviceInterfacies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -10,7 +12,7 @@ namespace MarketApi.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ReturnOrganizationController(IGenericService<ReturnOrganizationRequest, ReturnOrganizationUpdateRequest, ReturnOrganizationResponse> service, ILogger<ReturnOrganizationController> logger) : ControllerBase
+    public class ReturnOrganizationController(IReturnOrganizationService<ReturnOrganizationRequest, ReturnOrganizationUpdateRequest, ReturnOrganizationResponse> service, ILogger<ReturnOrganizationController> logger) : ControllerBase
     {
         [HttpPost]
         [Authorize(Roles = "admin")]
@@ -41,7 +43,7 @@ namespace MarketApi.Controllers
                 var sales = service.GetAll();
                 if (sales is null || !sales.Any())
                 {
-                    return NotFound("No Sale found.");
+                    return NotFound("No Sell found.");
                 }
                 return Ok(sales);
 
@@ -63,21 +65,46 @@ namespace MarketApi.Controllers
         {
             try
             {
-                var resultPagination = service.GetAll(pageSize, pageNumber);
-                if (resultPagination is null || !resultPagination.Any())
+                var result = service.GetAll(pageSize, pageNumber);
+                if (result is null || !result.Any())
                 {
-                    return NotFound("No resultPagination found.");
+                    return NotFound("No elements found.");
                 }
-                return Ok(resultPagination);
+                return Ok(result);
             }
             catch (SqlException ex)
             {
-                Log.Error("SQL Error in Create method: {@ex}", ex);
+                Log.Error("SQL Error in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Log.Error("Exception in Create method: {@ex}", ex);
+                Log.Error("Exception in Pagination method: {@ex}", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetReport")]
+        public IActionResult GetReport([FromQuery] ReportModel reportModel)
+        {
+            try
+            {
+                var purchases = service.GetReport(reportModel);
+                if (purchases is null || !purchases.Any())
+                {
+                    return NotFound("There is no record with such parameters");
+                }
+                return Ok(purchases);
+
+            }
+            catch (SqlException ex)
+            {
+                Log.Error("SQL Error in GetReport method: {@ex}", ex);
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in GetReport method: {@ex}", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -111,14 +138,14 @@ namespace MarketApi.Controllers
         {
             try
             {
-                logger.LogInformation($"Deleting Sale with ID: {id} from the database.");
+                logger.LogInformation($"Deleting Sell with ID: {id} from the database.");
                 var resDel = service.Remove(id);
                 return Ok(resDel);
 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"An error occurred while deleting Sale with ID: {id}.");
+                logger.LogError(ex, $"An error occurred while deleting Sell with ID: {id}.");
                 throw new Exception(ex.Message);
             }
         }
@@ -129,13 +156,13 @@ namespace MarketApi.Controllers
         {
             try
             {
-                logger.LogInformation($"Updating Sale with ID: {saleUpdate.Id} in the database.");
+                logger.LogInformation($"Updating Sell with ID: {saleUpdate.Id} in the database.");
                 var product = service.Update(saleUpdate);
                 return Ok(product);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"An error occurred while updating Sale with ID: {saleUpdate.Id}.");
+                logger.LogError(ex, $"An error occurred while updating Sell with ID: {saleUpdate.Id}.");
                 throw new Exception(ex.Message);
             }
         }

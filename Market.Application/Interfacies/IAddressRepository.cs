@@ -4,5 +4,6 @@ namespace MarketApi.Infrastructure.Interfacies
 {
     public interface IAddressRepository : IRepository<Address>
     {
+
     }
 }

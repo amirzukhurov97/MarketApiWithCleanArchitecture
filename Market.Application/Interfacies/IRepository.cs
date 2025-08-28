@@ -4,13 +4,13 @@ namespace MarketApi.Infrastructure.Interfacies
 {
     public interface IRepository<T> where T : class
     {        
-        IQueryable<T> GetAll();
+        public abstract IQueryable<T> GetAll();
 
-        IQueryable<T> GetAll(int pageSize, int pageNumber);
+        public abstract IQueryable<T> GetAll(int pageSize, int pageNumber);
 
-        IQueryable<T> GetById(Guid id);
-        T Add(T entity);
-        bool Remove(Guid id);
-        bool Update(T entity);
+        public abstract IQueryable<T> GetById(Guid id);
+        public abstract T Add(T entity);
+        public abstract bool Remove(Guid id);
+        public abstract bool Update(T entity);
     }
 }

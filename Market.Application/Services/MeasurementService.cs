@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.CurrencyExchange;
 using Market.Application.DTOs.Measurement;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
@@ -49,14 +50,22 @@ namespace Market.Application.Services
 
         public IEnumerable<MeasurementResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<MeasurementResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public MeasurementResponse GetById(Guid id)
         {
             try
             {
-                MeasurementResponse responses = null;
+                MeasurementResponse? responses = null;
                 var productResponse = repository.GetById(id).ToList();
                 if (productResponse.Count > 0)
                 {

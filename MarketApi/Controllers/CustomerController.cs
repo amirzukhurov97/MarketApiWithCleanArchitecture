@@ -1,5 +1,6 @@
 ﻿using Market.Application.DTOs.Customer;
 using Market.Application.Services;
+using Market.Application.SeviceInterfacies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -11,7 +12,7 @@ namespace MarketApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize]
-    public class CustomerController(IGenericService<CustomerRequest, CustomerUpdateRequest, CustomerResponse> customerService, ILogger<ProductController> logger) : ControllerBase
+    public class CustomerController(ICustomerService<CustomerRequest, CustomerUpdateRequest, CustomerResponse> customerService, ILogger<CustomerController> logger) : ControllerBase
     {        
 
         [HttpGet]
@@ -40,17 +41,18 @@ namespace MarketApi.Controllers
 
         }
 
-        [HttpGet("pagination")]
-        public IActionResult GetAll(int pageSize, int pageNumber)
+        [HttpGet("GetByAlphabet")]
+        public IActionResult GetByAlphabet()
         {
             try
             {
-                var addresses = customerService.GetAll(pageSize, pageNumber);
-                if (addresses is null || !addresses.Any())
+                var customers = customerService.GetByAlphabet();
+                if (customers is null || !customers.Any())
                 {
-                    return NotFound("No addresses found.");
+                    return NotFound("No customers found.");
                 }
-                return Ok(addresses);
+                return Ok(customers);
+
             }
             catch (SqlException ex)
             {
@@ -60,6 +62,31 @@ namespace MarketApi.Controllers
             catch (Exception ex)
             {
                 Log.Error("Exception in Create method: {@ex}", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
+
+        [HttpGet("pagination")]
+        public IActionResult GetAll(int pageSize, int pageNumber)
+        {
+            try
+            {
+                var result = customerService.GetAll(pageSize, pageNumber);
+                if (result is null || !result.Any())
+                {
+                    return NotFound("No elements found.");
+                }
+                return Ok(result);
+            }
+            catch (SqlException ex)
+            {
+                Log.Error("SQL Error in Pagination method: {@ex}", ex);
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

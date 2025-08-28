@@ -6,7 +6,7 @@ using MarketApi.Models;
 
 namespace Market.Application.Services
 {
-    public class AddressService(IAddressRepository repository, IMapper mapper) : IAddressService
+    public class AddressService(IAddressRepository repository, IMapper mapper) : IAddressService<AddressRequest,AddressUpdateRequest,AddressResponse>
     {
         public string Create(AddressRequest item)
         {
@@ -56,11 +56,24 @@ namespace Market.Application.Services
             }
         }
 
+        public IEnumerable<AddressResponse> GetByAlphabet()
+        {
+            try
+            {
+                var adresses = repository.GetAll().OrderBy(a=>a.Name).ToList();
+                return mapper.Map<List<AddressResponse>>(adresses);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public AddressResponse GetById(Guid id)
         {
             try
             {
-                AddressResponse responses = null;
+                AddressResponse? responses = null;
                 var response = repository.GetById(id).ToList();
                 if (response.Count > 0)
                 {

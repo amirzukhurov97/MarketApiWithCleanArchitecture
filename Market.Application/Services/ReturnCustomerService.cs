@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Purchase;
+using Market.Application.DTOs.Report;
 using Market.Application.DTOs.ReturnCustomer;
+using Market.Application.DTOs.Sell;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class ReturnCustomerService(IReturnCustomerRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IGenericService<ReturnCustomerRequest, ReturnCustomerUpdateRequest, ReturnCustomerResponse>
+    public class ReturnCustomerService(IReturnCustomerRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IReturnCustomerService<ReturnCustomerRequest, ReturnCustomerUpdateRequest, ReturnCustomerResponse>
     {
         public string Create(ReturnCustomerRequest item)
         {
@@ -65,14 +69,60 @@ namespace Market.Application.Services
 
         public IEnumerable<ReturnCustomerResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<ReturnCustomerResponse>>(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<ReturnCustomerResponse> GetReport(ReportModel reportModel)
+        {
+            try
+            {
+                var query = repository.GetAll()
+                    .Include(pc => pc.Product)
+                    .Include(pm => pm.Customer)
+                    .AsQueryable();
+
+                if (reportModel.ProductId != null)
+                {
+                    query = query.Where(p => p.ProductId == reportModel.ProductId);
+                }
+
+                if (reportModel.OrganizationOrCustomerId != null)
+                {
+                    query = query.Where(p => p.CustomerId == reportModel.OrganizationOrCustomerId);
+                }
+
+                if (reportModel.StartDate != null)
+                {
+                    query = query.Where(p => p.Date >= reportModel.StartDate);
+                }
+
+                if (reportModel.EndDate != null)
+                {
+                    query = query.Where(p => p.Date <= reportModel.EndDate);
+                }
+
+                var reportReturnCustomers = query.ToList();
+                return mapper.Map<List<ReturnCustomerResponse>>(reportReturnCustomers);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public ReturnCustomerResponse GetById(Guid id)
         {
             try
             {
-                ReturnCustomerResponse responses = null;
+                ReturnCustomerResponse? responses = null;
                 var purchaseList = repository.GetById(id).Include(pc => pc.Product).Include(pm => pm.Customer).FirstOrDefault();
                 if (purchaseList != null)
                 {

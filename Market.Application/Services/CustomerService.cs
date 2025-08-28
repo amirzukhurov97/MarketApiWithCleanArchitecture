@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Address;
+using Market.Application.DTOs.CurrencyExchange;
 using Market.Application.DTOs.Customer;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Market.Application.Services
 {
-    public class CustomerService(ICustomerRepository repository, IMapper mapper) : IGenericService<CustomerRequest, CustomerUpdateRequest, CustomerResponse>
+    public class CustomerService(ICustomerRepository repository, IMapper mapper) : ICustomerService<CustomerRequest, CustomerUpdateRequest, CustomerResponse>
     {
         public string Create(CustomerRequest item)
         {
@@ -47,14 +50,35 @@ namespace Market.Application.Services
 
         public IEnumerable<CustomerResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<CustomerResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<CustomerResponse> GetByAlphabet()
+        {
+            try
+            {
+                var customers = repository.GetAll().OrderBy(a => a.Name).ToList();
+                return mapper.Map<List<CustomerResponse>>(customers);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public CustomerResponse GetById(Guid id)
         {
             try
             {
-                CustomerResponse responses = null;
+                CustomerResponse? responses = null;
                 var response = repository.GetById(id).Include(c=>c.Address).ToList();
                 if (response.Count > 0)
                 {

@@ -2,7 +2,7 @@
 
 namespace MarketApi.Models
 {
-    public class Sale : ProductBase
+    public class Sell : ProductBase
     {
         public Guid CustomerId { get; set; }
         public Customer Customer { get; set; } = null!;

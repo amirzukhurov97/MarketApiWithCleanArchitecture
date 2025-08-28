@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Address;
+using Market.Application.DTOs.CurrencyExchange;
 using Market.Application.DTOs.Organization;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class OrganizationService(IOrganizationRepository repository, IMapper mapper) : IGenericService<OrganizationRequest, OrganizationUpdateRequest, OrganizationResponse>
+    public class OrganizationService(IOrganizationRepository repository, IMapper mapper) : IOrganizationService<OrganizationRequest, OrganizationUpdateRequest, OrganizationResponse>
     {
         public string Create(OrganizationRequest item)
         {
@@ -46,14 +49,35 @@ namespace Market.Application.Services
 
         public IEnumerable<OrganizationResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<OrganizationResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<OrganizationResponse> GetByAlphabet()
+        {
+            try
+            {
+                var organization = repository.GetAll().OrderBy(a => a.Name).ToList();
+                return mapper.Map<List<OrganizationResponse>>(organization);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public OrganizationResponse GetById(Guid id)
         {
             try
             {
-                OrganizationResponse responses = null;
+                OrganizationResponse? responses = null;
                 var organizationResponse = repository.GetById(id).Include(pc => pc.Address).Include(pm => pm.OrganizationType).ToList();
                 if (organizationResponse.Count > 0)
                 {

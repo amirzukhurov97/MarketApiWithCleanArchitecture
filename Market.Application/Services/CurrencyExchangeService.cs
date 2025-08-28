@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Address;
 using Market.Application.DTOs.CurrencyExchange;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
@@ -48,14 +49,22 @@ namespace Market.Application.Services
 
         public IEnumerable<CurrencyExchangeResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<CurrencyExchangeResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public CurrencyExchangeResponse GetById(Guid id)
         {
             try
             {
-                CurrencyExchangeResponse responses = null;
+                CurrencyExchangeResponse? responses = null;
                 var exchangeList = repository.GetById(id).ToList();
                 if (exchangeList.Count > 0)
                 {

@@ -1,8 +1,8 @@
 ﻿using Market.Domain.Abstract.Entity;
 
-namespace Market.Application.DTOs.Sale
+namespace Market.Application.DTOs.Sell
 {
-    public record SaleUpdateRequest : EntityBaseUpdateRequest
+    public record SellUpdateRequest : EntityBaseUpdateRequest
     {
         public decimal Price { get; set; }
         public decimal PriceUSD { get; set; }

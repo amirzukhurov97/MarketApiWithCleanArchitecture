@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Purchase;
 using Market.Application.DTOs.User;
 using Market.Application.Interfacies;
 using MarketApi.Models;
@@ -48,14 +49,22 @@ namespace Market.Application.Services
 
         public IEnumerable<UserResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<UserResponse>>(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public UserResponse GetById(Guid id)
         {
             try
             {
-                UserResponse responses = null;
+                UserResponse? responses = null;
                 var response = repository.GetById(id).FirstOrDefault();
                 if (response !=null)
                 {

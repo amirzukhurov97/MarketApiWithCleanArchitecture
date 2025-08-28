@@ -2,7 +2,7 @@
 
 namespace MarketApi.Infrastructure.Interfacies
 {
-    public interface ISaleRepository : IRepository<Sale>
+    public interface ISaleRepository : IRepository<Sell>
     {
     }
 }

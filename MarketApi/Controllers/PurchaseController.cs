@@ -1,5 +1,7 @@
 ﻿using Market.Application.DTOs.Purchase;
+using Market.Application.DTOs.Report;
 using Market.Application.Services;
+using Market.Application.SeviceInterfacies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -10,7 +12,7 @@ namespace MarketApi.Controllers
    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class PurchaseController(IGenericService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse> service, ILogger<PurchaseController> logger) : ControllerBase
+    public class PurchaseController(IPurchaseService<PurchaseRequest, PurchaseUpdateRequest, PurchaseResponse> service, ILogger<PurchaseController> logger) : ControllerBase
     {
         [HttpPost]
         //[Authorize(Roles = "admin")]
@@ -37,24 +39,25 @@ namespace MarketApi.Controllers
         {
             try
             {
-                var resultPagination = service.GetAll(pageSize, pageNumber);
-                if (resultPagination is null || !resultPagination.Any())
+                var result = service.GetAll(pageSize, pageNumber);
+                if (result is null || !result.Any())
                 {
-                    return NotFound("No resultPagination found.");
+                    return NotFound("No elements found.");
                 }
-                return Ok(resultPagination);
+                return Ok(result);
             }
             catch (SqlException ex)
             {
-                Log.Error("SQL Error in Create method: {@ex}", ex);
+                Log.Error("SQL Error in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Log.Error("Exception in Create method: {@ex}", ex);
+                Log.Error("Exception in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -70,12 +73,37 @@ namespace MarketApi.Controllers
             }
             catch (SqlException ex)
             {
-                Log.Error("SQL Error in Create method: {@ex}", ex);
+                Log.Error("SQL Error in GetAll method: {@ex}", ex);
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Log.Error("Exception in Create method: {@ex}", ex);
+                Log.Error("Exception in GetAll method: {@ex}", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetReport")]
+        public IActionResult GetReport([FromQuery]ReportModel reportModel)
+        {
+            try
+            {
+                var purchases = service.GetReport(reportModel);
+                if (purchases is null || !purchases.Any())
+                {
+                    return NotFound("There is no record with such parameters");
+                }
+                return Ok(purchases);
+
+            }
+            catch (SqlException ex)
+            {
+                Log.Error("SQL Error in GetAll method: {@ex}", ex);
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in GetAll method: {@ex}", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

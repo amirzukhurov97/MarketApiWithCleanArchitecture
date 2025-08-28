@@ -9,7 +9,7 @@ namespace MarketApi.Models
         public Guid AddressId { get; set; }
         public Address Address { get; set; } = null!;
 
-        public List<Sale> Sales { get; set; } = new List<Sale>();
+        public List<Sell> Sales { get; set; } = new List<Sell>();
         public List<ReturnCustomer> ReturnCustomers { get; set; } = new List<ReturnCustomer>();
     }
 }

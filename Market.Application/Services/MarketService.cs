@@ -29,5 +29,18 @@ namespace Market.Application.Services
                 throw;
             }
         }
+
+        public IEnumerable<MarketResponse> GetAll(int pageSize, int pageNumber)
+        {
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<MarketResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

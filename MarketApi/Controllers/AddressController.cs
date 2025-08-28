@@ -1,5 +1,6 @@
 ﻿using Market.Application.DTOs.Address;
 using Market.Application.Services;
+using Market.Application.SeviceInterfacies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -7,10 +8,10 @@ using Serilog;
 
 namespace MarketApi.Controllers
 {
-    //[Authorize]
+    
     [ApiController]
     [Route("api/[controller]")]
-    public class AddressController(IGenericService<AddressRequest, AddressUpdateRequest, AddressResponse> addressService, ILogger<AddressController> logger) : ControllerBase
+    public class AddressController(IAddressService<AddressRequest,AddressUpdateRequest,AddressResponse> addressService,  ILogger<AddressController> logger) : ControllerBase
     {
         [HttpGet]
         public IActionResult GetAll()
@@ -35,12 +36,14 @@ namespace MarketApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet("pagination")]
-        public IActionResult GetAll(int pageSize, int pageNumber)
+
+        [Authorize]
+        [HttpGet("ByAlphabet")]
+        public IActionResult GetByAlphabet()
         {
             try
             {
-                var addresses = addressService.GetAll(pageSize, pageNumber);
+                var addresses = addressService.GetByAlphabet();
                 if (addresses is null || !addresses.Any())
                 {
                     return NotFound("No addresses found.");
@@ -55,6 +58,30 @@ namespace MarketApi.Controllers
             catch (Exception ex)
             {
                 Log.Error("Exception in Create method: {@ex}", ex);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("pagination")]
+        public IActionResult GetAll(int pageSize, int pageNumber)
+        {
+            try
+            {
+                var addresses = addressService.GetAll(pageSize, pageNumber);
+                if (addresses is null || !addresses.Any())
+                {
+                    return NotFound("No elements found.");
+                }
+                return Ok(addresses);
+            }
+            catch (SqlException ex)
+            {
+                Log.Error("SQL Error in Pagination method: {@ex}", ex);
+                return StatusCode(500, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Exception in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

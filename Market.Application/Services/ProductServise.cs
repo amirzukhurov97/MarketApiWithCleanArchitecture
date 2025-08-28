@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Address;
+using Market.Application.DTOs.CurrencyExchange;
 using Market.Application.DTOs.Product;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +10,7 @@ using System.Numerics;
 
 namespace Market.Application.Services
 {
-    public class ProductServise(IProductRepository repository, IMapper mapper) : IGenericService<ProductRequest, ProductUpdateRequest, ProductResponse>
+    public class ProductServise(IProductRepository repository, IMapper mapper) : IProductService<ProductRequest, ProductUpdateRequest, ProductResponse>
     {        
         public string Create(ProductRequest item)
         {
@@ -47,14 +50,35 @@ namespace Market.Application.Services
 
         public IEnumerable<ProductResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<ProductResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<ProductResponse> GetByAlphabet()
+        {
+            try
+            {
+                var products = repository.GetAll().OrderBy(a => a.Name).ToList();
+                return mapper.Map<List<ProductResponse>>(products);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public ProductResponse GetById(Guid id)
         {
             try
             {
-                ProductResponse responses = null;
+                ProductResponse? responses = null;
                 var productResponse = repository.GetById(id).Include(pc => pc.ProductCategory).Include(pm => pm.Measurement).FirstOrDefault();
                 if (productResponse !=null)
                 {

@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.Purchase;
+using Market.Application.DTOs.Report;
 using Market.Application.DTOs.ReturnOrganization;
+using Market.Application.DTOs.Sell;
+using Market.Application.SeviceInterfacies;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services
 {
-    public class ReturnOrganizationService(IReturnOrganizationRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IGenericService<ReturnOrganizationRequest, ReturnOrganizationUpdateRequest, ReturnOrganizationResponse>
+    public class ReturnOrganizationService(IReturnOrganizationRepository repository, IMarketRopository marketRopository, ICurrencyExchangeRepository currency, IMapper mapper) : IReturnOrganizationService<ReturnOrganizationRequest, ReturnOrganizationUpdateRequest, ReturnOrganizationResponse>
     {
         public string Create(ReturnOrganizationRequest item)
         {
@@ -65,14 +69,59 @@ namespace Market.Application.Services
 
         public IEnumerable<ReturnOrganizationResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<ReturnOrganizationResponse>>(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
+        public IEnumerable<ReturnOrganizationResponse> GetReport(ReportModel reportModel)
+        {
+            try
+            {
+                var query = repository.GetAll()
+                    .Include(pc => pc.Product)
+                    .Include(pm => pm.Organization)
+                    .AsQueryable();
+
+                if (reportModel.ProductId != null)
+                {
+                    query = query.Where(p => p.ProductId == reportModel.ProductId);
+                }
+
+                if (reportModel.OrganizationOrCustomerId != null)
+                {
+                    query = query.Where(p => p.OrganizationId == reportModel.OrganizationOrCustomerId);
+                }
+
+                if (reportModel.StartDate != null)
+                {
+                    query = query.Where(p => p.Date >= reportModel.StartDate);
+                }
+
+                if (reportModel.EndDate != null)
+                {
+                    query = query.Where(p => p.Date <= reportModel.EndDate);
+                }
+
+                var reportReturnOrganizations = query.ToList();
+                return mapper.Map<List<ReturnOrganizationResponse>>(reportReturnOrganizations);
+            }
+            catch (Exception)
+            {
+                throw; // здесь можно логировать через Serilog вместо простого throw
+            }
+        }
         public ReturnOrganizationResponse GetById(Guid id)
         {
             try
             {
-                ReturnOrganizationResponse responses = null;
+                ReturnOrganizationResponse? responses = null;
                 var purchaseList = repository.GetById(id).Include(pc => pc.Product).Include(pm => pm.Organization).FirstOrDefault();
                 if (purchaseList != null)
                 {

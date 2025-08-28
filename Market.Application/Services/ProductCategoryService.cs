@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Market.Application.DTOs.CurrencyExchange;
 using Market.Application.DTOs.ProductCategory;
 using MarketApi.Infrastructure.Interfacies;
 using MarketApi.Models;
@@ -49,14 +50,22 @@ namespace Market.Application.Services
 
         public IEnumerable<ProductCategoryResponse> GetAll(int pageSize, int pageNumber)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var resultPage = repository.GetAll(pageSize, pageNumber).ToList();
+                return mapper.Map<List<ProductCategoryResponse>>(resultPage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public ProductCategoryResponse GetById(Guid id)
         {
             try
             {
-                ProductCategoryResponse responses = null;
+                ProductCategoryResponse? responses = null;
                 var productResponse = repository.GetById(id).ToList();
                 if (productResponse.Count > 0)
                 {

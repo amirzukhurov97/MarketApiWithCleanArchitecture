@@ -335,7 +335,7 @@ namespace Market.Api.Migrations
                     b.ToTable("ReturnOrganizations");
                 });
 
-            modelBuilder.Entity("MarketApi.Models.Sale", b =>
+            modelBuilder.Entity("MarketApi.Models.Sell", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -543,7 +543,7 @@ namespace Market.Api.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MarketApi.Models.Sale", b =>
+            modelBuilder.Entity("MarketApi.Models.Sell", b =>
                 {
                     b.HasOne("MarketApi.Models.Customer", "Customer")
                         .WithMany("Sales")

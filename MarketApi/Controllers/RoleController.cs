@@ -62,26 +62,27 @@ namespace Market.Api.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
         [HttpGet("pagination")]
         public IActionResult GetAll(int pageSize, int pageNumber)
         {
             try
             {
-                var resultPagination = service.GetAll(pageSize, pageNumber);
-                if (resultPagination is null || !resultPagination.Any())
+                var result = service.GetAll(pageSize, pageNumber);
+                if (result is null || !result.Any())
                 {
-                    return NotFound("No resultPagination found.");
+                    return NotFound("No elements found.");
                 }
-                return Ok(resultPagination);
+                return Ok(result);
             }
             catch (SqlException ex)
             {
-                Log.Error("SQL Error in Create method: {@ex}", ex);
+                Log.Error("SQL Error in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Log.Error("Exception in Create method: {@ex}", ex);
+                Log.Error("Exception in Pagination method: {@ex}", ex);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
